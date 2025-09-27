@@ -1,3 +1,4 @@
+
 # Intérprete con Lenguaje Gamer
 
 Intérprete de instrucciones tipo Gamer con GUI y pruebas automáticas.
@@ -50,3 +51,7 @@ Intérprete de instrucciones tipo Gamer con GUI y pruebas automáticas.
 Desarrollado por:
 - Christian Jafeth Pena Espinoza 
 - Luciana Chacon Castillo
+
+# InterpreteGamerLang
+Intérprete de lenguaje Gamer en español con interfaz gráfica (Tkinter) y pruebas automáticas.
+
