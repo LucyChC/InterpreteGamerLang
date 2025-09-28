@@ -13,6 +13,21 @@ class SemanticAnalyzer:
     """
     Analizador semántico para el lenguaje Gamer.
     """
+    """Helper para verificar si un token es una variable definida o un número válido."""
+    def _check_var_or_number(self, token):
+        tipo, valor = token
+        # Si es número o decimal, es válido
+        if tipo in ("NUMERO", "DECIMAL"):
+            return True
+        # Si es identificador, debe existir en las variables
+        if tipo == "IDENTIFICADOR":
+            if valor not in self.variables:
+                raise SemanticError(f"La variable '{valor}' no está definida.")
+            return True
+        # Otro tipo de token no es válido
+        raise SemanticError(f"Token inesperado: {valor}")
+
+
 
     def __init__(self) -> None:
         # Diccionario de variables definidas y sus valores
@@ -29,59 +44,40 @@ class SemanticAnalyzer:
             var_name = tokens[1][1]
             if var_name in self.variables:
                 raise SemanticError(f"La variable '{var_name}' ya está definida.")
+            # Validar que el valor sea número/decimal o variable ya definida
+            self._check_var_or_number(tokens[3])
+            # Guardamos la variable (aunque el valor se maneje en interpreter)
             self.variables[var_name] = tokens[3][1]
             return True
 
         # curar <identificador> <identificador>
         if cmd == "curar":
-            var1 = tokens[1][1]
-            var2 = tokens[2][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
-            if var2 not in self.variables:
-                raise SemanticError(f"La variable '{var2}' no está definida.")
+            self._check_var_or_number(tokens[1])
+            self._check_var_or_number(tokens[2])
             return True
 
         # golpear <identificador> <identificador>
         if cmd == "golpear":
-            var1 = tokens[1][1]
-            var2 = tokens[2][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
-            if var2 not in self.variables:
-                raise SemanticError(f"La variable '{var2}' no está definida.")
+            self._check_var_or_number(tokens[1])
+            self._check_var_or_number(tokens[2])
             return True
 
         # multiplicar <identificador> <identificador>
         if cmd == "multiplicar":
-            var1 = tokens[1][1]
-            var2 = tokens[2][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
-            if var2 not in self.variables:
-                raise SemanticError(f"La variable '{var2}' no está definida.")
+            self._check_var_or_number(tokens[1])
+            self._check_var_or_number(tokens[2])
             return True
 
         # dividir <identificador> <identificador>
         if cmd == "dividir":
-            var1 = tokens[1][1]
-            var2 = tokens[2][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
-            if var2 not in self.variables:
-                raise SemanticError(f"La variable '{var2}' no está definida.")
-            if self.variables[var2] == "0" or self.variables[var2] == 0:
-                raise SemanticError("No se puede dividir por cero.")
+            self._check_var_or_number(tokens[1])
+            self._check_var_or_number(tokens[2])
             return True
 
         # poder <identificador> <identificador>
         if cmd == "poder":
-            var1 = tokens[1][1]
-            var2 = tokens[2][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
-            if var2 not in self.variables:
-                raise SemanticError(f"La variable '{var2}' no está definida.")
+            self._check_var_or_number(tokens[1])
+            self._check_var_or_number(tokens[2])
             return True
 
         # revivir <identificador>
@@ -89,8 +85,6 @@ class SemanticAnalyzer:
             var1 = tokens[1][1]
             if var1 not in self.variables:
                 raise SemanticError(f"La variable '{var1}' no está definida.")
-            if float(self.variables[var1]) < 0:
-                raise SemanticError("No se puede calcular la raíz de un número negativo.")
             return True
 
         # xp <identificador>

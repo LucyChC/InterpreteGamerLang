@@ -47,3 +47,13 @@ def test_tokenize_desconocido():
         ("DESCONOCIDO", "@"),
         ("NUMERO", "100")
     ]
+def test_lexer_case_insensitive_crear():
+    from interprete.lexer import Lexer
+    lexer = Lexer()
+    tokens = lexer.tokenize("CREAR VIDA = 100")
+    assert tokens[0][1] == "crear"
+    assert tokens[1][1] == "vida"
+    assert tokens[2][1] == "="
+    assert tokens[3][1] == "100"
+
+

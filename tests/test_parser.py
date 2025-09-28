@@ -88,3 +88,11 @@ def test_parse_instruccion_no_reconocida():
     tokens = lexer.tokenize("foo bar baz")
     with pytest.raises(ParserError):
         parser.parse(tokens)
+
+def test_parser_multiplicar_valores():
+    from interprete.lexer import Lexer
+    from interprete.parser import Parser
+    lexer = Lexer()
+    parser = Parser()
+    tokens = lexer.tokenize("multiplicar 2 a")
+    assert parser.parse(tokens) is True

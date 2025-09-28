@@ -16,31 +16,28 @@ class Lexer:
     def tokenize(self, instruction: str) -> List[Tuple[str, str]]:
         """
         Convierte una instrucción en una lista de tokens (tipo, valor).
-
-        Args:
-            instruction: Instrucción en texto.
-
-        Returns:
-            Lista de tuplas (tipo, valor).
         """
         tokens = []
+        # Pasamos todo a minúsculas para que CREAR = crear
         words = instruction.strip().split()
         for word in words:
-            if word == "=":
-                tokens.append(("IGUAL", word))
-            elif word.lstrip('-').isdigit():
-                tokens.append(("NUMERO", word))
-            elif word.replace('.', '', 1).lstrip('-').isdigit():
-                tokens.append(("DECIMAL", word))
-            elif word.isidentifier():
-                tokens.append(("IDENTIFICADOR", word))
+            w = word.lower()
+            if w == "=":
+                tokens.append(("IGUAL", "="))
+            elif w.lstrip('-').isdigit():
+                tokens.append(("NUMERO", w))
+            elif w.replace('.', '', 1).lstrip('-').isdigit():
+                tokens.append(("DECIMAL", w))
+            elif w.isidentifier():
+                tokens.append(("IDENTIFICADOR", w))
             else:
-                # Si no es número ni identificador, lo tratamos como desconocido
-                tokens.append(("DESCONOCIDO", word))
+                tokens.append(("DESCONOCIDO", w))
         return tokens
+
 
 # Ejemplo de uso:
 if __name__ == "__main__":
     lexer = Lexer()
     instruccion = "crear vida = 100"
     print(lexer.tokenize(instruccion))
+

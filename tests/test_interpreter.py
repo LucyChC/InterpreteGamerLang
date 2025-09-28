@@ -154,3 +154,44 @@ def test_instruccion_no_reconocida():
     interp = Interpreter()
     with pytest.raises(InterpreterError):
         interp.eval_instruction("foo bar baz")
+
+def test_multiplicar_numero_numero():
+    from interprete.interpreter import Interpreter
+    interp = Interpreter()
+    result = interp.eval_instruction("multiplicar 4 5")
+    assert result == "Resultado: 20"
+
+def test_multiplicar_numero_variable():
+    from interprete.interpreter import Interpreter
+    interp = Interpreter()
+    interp.eval_instruction("crear a = 10")
+    result = interp.eval_instruction("multiplicar 4 a")
+    assert result == "Resultado: 40"
+
+def test_multiplicar_variable_numero():
+    from interprete.interpreter import Interpreter
+    interp = Interpreter()
+    interp.eval_instruction("crear a = 10")
+    result = interp.eval_instruction("multiplicar a 4")
+    assert result == "Resultado: 40"
+
+def test_poder_numero_numero():
+    from interprete.interpreter import Interpreter
+    interp = Interpreter()
+    result = interp.eval_instruction("poder 2 3")
+    assert result == "Resultado: 8"
+
+def test_poder_variable_numero():
+    from interprete.interpreter import Interpreter
+    interp = Interpreter()
+    interp.eval_instruction("crear a = 10")
+    result = interp.eval_instruction("poder a 2")
+    assert result == "Resultado: 100"
+
+def test_poder_numero_variable():
+    from interprete.interpreter import Interpreter
+    interp = Interpreter()
+    interp.eval_instruction("crear b = 3")
+    result = interp.eval_instruction("poder 2 b")
+    assert result == "Resultado: 8"
+
