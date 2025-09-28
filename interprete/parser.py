@@ -67,27 +67,27 @@ class Parser:
                 return True
             else:
                 raise ParserError("Sintaxis inválida para 'golpear'.")
-        # multiplicar <identificador> <identificador>
+        # multiplicar <valor> <valor>
         if tokens[0][1] == "multiplicar":
             if (len(tokens) == 3 and
-                tokens[1][0] == "IDENTIFICADOR" and
-                tokens[2][0] == "IDENTIFICADOR"):
+                tokens[1][0] in ("NUMERO", "DECIMAL", "IDENTIFICADOR") and
+                tokens[2][0] in ("NUMERO", "DECIMAL", "IDENTIFICADOR")):
                 return True
             else:
                 raise ParserError("Sintaxis inválida para 'multiplicar'.")
         # dividir <identificador> <identificador>
         if tokens[0][1] == "dividir":
             if (len(tokens) == 3 and
-                tokens[1][0] == "IDENTIFICADOR" and
-                tokens[2][0] == "IDENTIFICADOR"):
+                tokens[1][0] in ("NUMERO", "DECIMAL", "IDENTIFICADOR") and
+                tokens[2][0] in ("NUMERO", "DECIMAL", "IDENTIFICADOR")):
                 return True
             else:
                 raise ParserError("Sintaxis inválida para 'dividir'.")
-        # poder <identificador> <identificador>
+        # poder <valor> <valor>
         if tokens[0][1] == "poder":
             if (len(tokens) == 3 and
-                tokens[1][0] == "IDENTIFICADOR" and
-                tokens[2][0] == "IDENTIFICADOR"):
+                tokens[1][0] in ("NUMERO", "DECIMAL", "IDENTIFICADOR") and
+                tokens[2][0] in ("NUMERO", "DECIMAL", "IDENTIFICADOR")):
                 return True
             else:
                 raise ParserError("Sintaxis inválida para 'poder'.")
@@ -141,3 +141,4 @@ if __name__ == "__main__":
         print("Sintaxis válida:", valido)
     except ParserError as e:
         print("Error de sintaxis:", e)
+

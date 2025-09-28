@@ -80,22 +80,22 @@ class Interpreter:
             return f"Resultado: {a - b}"
 
         elif action == "multiplica":
-            a = self.variables[tokens[1][1]]
-            b = self.variables[tokens[2][1]]
+            a = self._resolve_value(tokens[1])
+            b = self._resolve_value(tokens[2])
             self._check_numeric(a, b)
             return f"Resultado: {a * b}"
 
         elif action == "divide":
-            a = self.variables[tokens[1][1]]
-            b = self.variables[tokens[2][1]]
+            a = self._resolve_value(tokens[1])
+            b = self._resolve_value(tokens[2])
             self._check_numeric(a, b)
             if b == 0:
                 raise InterpreterError("No se puede dividir por cero.")
             return f"Resultado: {a / b}"
 
         elif action == "potencia":
-            a = self.variables[tokens[1][1]]
-            b = self.variables[tokens[2][1]]
+            a = self._resolve_value(tokens[1])
+            b = self._resolve_value(tokens[2])
             self._check_numeric(a, b)
             return f"Resultado: {a ** b}"
 
@@ -152,3 +152,13 @@ class Interpreter:
         if name not in self.variables:
             raise InterpreterError(f"La variable '{name}' no está definida.")
         return self.variables[name]
+    
+    def _resolve_value(self, token: Tuple[str, str]):
+        tipo, valor = token
+        if tipo in ("NUMERO", "DECIMAL"):
+            return self._parse_value(valor)
+        elif tipo == "IDENTIFICADOR":
+            return self.get_variable(valor)
+        else:
+            raise InterpreterError(f"Valor no válido: {valor}")
+
