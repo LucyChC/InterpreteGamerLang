@@ -1,10 +1,11 @@
 from interprete.lexer import Lexer
+from interprete.keywords import KEYWORDS
 
 def test_tokenize_crear():
     lexer = Lexer()
     tokens = lexer.tokenize("crear vida = 100")
     assert tokens == [
-        ("IDENTIFICADOR", "crear"),
+        ("KEYWORD", "crear"),   # 🔹 antes era IDENTIFICADOR
         ("IDENTIFICADOR", "vida"),
         ("IGUAL", "="),
         ("NUMERO", "100")
@@ -14,7 +15,7 @@ def test_tokenize_curar():
     lexer = Lexer()
     tokens = lexer.tokenize("curar vida pocion")
     assert tokens == [
-        ("IDENTIFICADOR", "curar"),
+        ("KEYWORD", "curar"),   # 🔹 corregido
         ("IDENTIFICADOR", "vida"),
         ("IDENTIFICADOR", "pocion")
     ]
@@ -23,7 +24,7 @@ def test_tokenize_dividir():
     lexer = Lexer()
     tokens = lexer.tokenize("dividir oro cofres")
     assert tokens == [
-        ("IDENTIFICADOR", "dividir"),
+        ("KEYWORD", "dividir"),  # 🔹 corregido
         ("IDENTIFICADOR", "oro"),
         ("IDENTIFICADOR", "cofres")
     ]
@@ -32,7 +33,7 @@ def test_tokenize_decimal():
     lexer = Lexer()
     tokens = lexer.tokenize("crear mana = 3.14")
     assert tokens == [
-        ("IDENTIFICADOR", "crear"),
+        ("KEYWORD", "crear"),  # 🔹 corregido
         ("IDENTIFICADOR", "mana"),
         ("IGUAL", "="),
         ("DECIMAL", "3.14")
@@ -42,18 +43,16 @@ def test_tokenize_desconocido():
     lexer = Lexer()
     tokens = lexer.tokenize("crear vida @ 100")
     assert tokens == [
-        ("IDENTIFICADOR", "crear"),
+        ("KEYWORD", "crear"),  # 🔹 corregido
         ("IDENTIFICADOR", "vida"),
         ("DESCONOCIDO", "@"),
         ("NUMERO", "100")
     ]
+
 def test_lexer_case_insensitive_crear():
-    from interprete.lexer import Lexer
     lexer = Lexer()
     tokens = lexer.tokenize("CREAR VIDA = 100")
-    assert tokens[0][1] == "crear"
-    assert tokens[1][1] == "vida"
-    assert tokens[2][1] == "="
-    assert tokens[3][1] == "100"
-
-
+    assert tokens[0] == ("KEYWORD", "crear")   # 🔹 corregido
+    assert tokens[1] == ("IDENTIFICADOR", "vida")
+    assert tokens[2] == ("IGUAL", "=")
+    assert tokens[3] == ("NUMERO", "100")

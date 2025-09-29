@@ -9,20 +9,7 @@ import math
 from interprete.lexer import Lexer
 from interprete.parser import Parser, ParserError
 from interprete.semantic import SemanticAnalyzer, SemanticError
-
-KEYWORDS = {
-    "crear": "definir_variable",
-    "curar": "suma",
-    "golpear": "resta",
-    "multiplicar": "multiplica",
-    "dividir": "divide",
-    "poder": "potencia",
-    "revivir": "raiz",
-    "xp": "abs",
-    "jefe": "max",
-    "esbirro": "min",
-    "decir": "imprimir"
-}
+from interprete.keywords import KEYWORD_ACTIONS
 
 class InterpreterError(Exception):
     """Excepción personalizada para errores del intérprete."""
@@ -59,7 +46,7 @@ class Interpreter:
 
         # 4. Ejecución de la instrucción
         cmd = tokens[0][1]
-        action = KEYWORDS.get(cmd, None)
+        action = KEYWORD_ACTIONS.get(cmd, None)
 
         if action == "definir_variable":
             name = tokens[1][1]

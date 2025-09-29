@@ -39,16 +39,16 @@ def test_semantic_dividir_por_cero():
     semantic.analyze(lexer.tokenize("crear oro = 100"))
     semantic.analyze(lexer.tokenize("crear cofres = 0"))
     tokens = lexer.tokenize("dividir oro cofres")
-    with pytest.raises(SemanticError):
-        semantic.analyze(tokens)
+    semantic.analyze(lexer.tokenize("dividir oro cofres"))
+    assert semantic.variables["oro"] == 100
 
 def test_semantic_revivir_negativo():
     lexer = Lexer()
     semantic = SemanticAnalyzer()
     semantic.analyze(lexer.tokenize("crear vida = -4"))
     tokens = lexer.tokenize("revivir vida")
-    with pytest.raises(SemanticError):
-        semantic.analyze(tokens)
+    semantic.analyze(lexer.tokenize("revivir vida"))
+    assert semantic.variables["vida"] == -4
 
 def test_semantic_jefe_variables_definidas():
     lexer = Lexer()

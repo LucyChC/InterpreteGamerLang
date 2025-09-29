@@ -4,6 +4,8 @@ Convierte instrucciones en una lista de tokens.
 """
 
 from typing import List, Tuple
+from interprete.keywords import KEYWORDS
+import re
 
 class Lexer:
     """
@@ -18,26 +20,38 @@ class Lexer:
         Convierte una instrucción en una lista de tokens (tipo, valor).
         """
         tokens = []
-        # Pasamos todo a minúsculas para que CREAR = crear
-        words = instruction.strip().split()
+
+        # Regex para separar cadenas entre comillas y palabras/números
+        pattern = r'"[^"]*"|\S+'
+        words = re.findall(pattern, instruction)
+
         for word in words:
+            # Guardamos el valor original (para cadenas)
+            val = word
+
+            # Comparamos en minúsculas para palabras clave
             w = word.lower()
+
             if w == "=":
                 tokens.append(("IGUAL", "="))
-            elif w.lstrip('-').isdigit():
+            elif re.fullmatch(r'-?\d+', w):
                 tokens.append(("NUMERO", w))
-            elif w.replace('.', '', 1).lstrip('-').isdigit():
+            elif re.fullmatch(r'-?\d+\.\d+', w):
                 tokens.append(("DECIMAL", w))
+            elif w in KEYWORDS:  # 🔹 Reconocer palabra clave
+                tokens.append(("KEYWORD", w))
+            elif re.fullmatch(r'"[^"]*"', word):  # 🔹 Detectar cadena
+                tokens.append(("CADENA", word.strip('"')))
             elif w.isidentifier():
                 tokens.append(("IDENTIFICADOR", w))
             else:
                 tokens.append(("DESCONOCIDO", w))
+
         return tokens
 
 
 # Ejemplo de uso:
 if __name__ == "__main__":
     lexer = Lexer()
-    instruccion = "crear vida = 100"
+    instruccion = 'crear nombre = "Juan"'
     print(lexer.tokenize(instruccion))
-

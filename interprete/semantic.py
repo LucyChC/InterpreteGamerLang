@@ -4,6 +4,7 @@ Verifica el significado lógico de las instrucciones.
 """
 
 from typing import List, Tuple, Dict
+from interprete.keywords import KEYWORDS
 
 class SemanticError(Exception):
     """Excepción personalizada para errores semánticos."""
@@ -13,25 +14,25 @@ class SemanticAnalyzer:
     """
     Analizador semántico para el lenguaje Gamer.
     """
+
+    def __init__(self) -> None:
+        # Diccionario de variables definidas y sus valores
+        self.variables: Dict[str, object] = {}  # 🔹 object para poder guardar int, float, str
+
     """Helper para verificar si un token es una variable definida o un número válido."""
     def _check_var_or_number(self, token):
         tipo, valor = token
-        # Si es número o decimal, es válido
-        if tipo in ("NUMERO", "DECIMAL"):
+        if tipo == "NUMERO":
             return True
-        # Si es identificador, debe existir en las variables
+        if tipo == "DECIMAL":
+            return True
         if tipo == "IDENTIFICADOR":
             if valor not in self.variables:
                 raise SemanticError(f"La variable '{valor}' no está definida.")
             return True
-        # Otro tipo de token no es válido
+        if tipo == "CADENA":
+            return True
         raise SemanticError(f"Token inesperado: {valor}")
-
-
-
-    def __init__(self) -> None:
-        # Diccionario de variables definidas y sus valores
-        self.variables: Dict[str, str] = {}
 
     def analyze(self, tokens: List[Tuple[str, str]]) -> bool:
         if not tokens:
@@ -39,85 +40,46 @@ class SemanticAnalyzer:
 
         cmd = tokens[0][1]
 
-        # crear <identificador> = <numero/decimal>
+        # crear <identificador> = <numero/decimal/cadena>
         if cmd == "crear":
             var_name = tokens[1][1]
             if var_name in self.variables:
                 raise SemanticError(f"La variable '{var_name}' ya está definida.")
-            # Validar que el valor sea número/decimal o variable ya definida
             self._check_var_or_number(tokens[3])
-            # Guardamos la variable (aunque el valor se maneje en interpreter)
-            self.variables[var_name] = tokens[3][1]
+            # Guardar valor convertido a int/float/str según tipo
+            tipo, valor = tokens[3]
+            if tipo == "NUMERO":
+                self.variables[var_name] = int(valor)
+            elif tipo == "DECIMAL":
+                self.variables[var_name] = float(valor)
+            else:
+                self.variables[var_name] = valor  # IDENTIFICADOR o CADENA
             return True
 
-        # curar <identificador> <identificador>
-        if cmd == "curar":
+        # Para todos los comandos que usan variables existentes
+        cmds_2vars = ["curar", "golpear", "multiplicar", "dividir", "poder"]
+        if cmd in cmds_2vars:
             self._check_var_or_number(tokens[1])
             self._check_var_or_number(tokens[2])
             return True
 
-        # golpear <identificador> <identificador>
-        if cmd == "golpear":
-            self._check_var_or_number(tokens[1])
-            self._check_var_or_number(tokens[2])
-            return True
-
-        # multiplicar <identificador> <identificador>
-        if cmd == "multiplicar":
-            self._check_var_or_number(tokens[1])
-            self._check_var_or_number(tokens[2])
-            return True
-
-        # dividir <identificador> <identificador>
-        if cmd == "dividir":
-            self._check_var_or_number(tokens[1])
-            self._check_var_or_number(tokens[2])
-            return True
-
-        # poder <identificador> <identificador>
-        if cmd == "poder":
-            self._check_var_or_number(tokens[1])
-            self._check_var_or_number(tokens[2])
-            return True
-
-        # revivir <identificador>
-        if cmd == "revivir":
+        cmds_1var = ["revivir", "xp", "decir"]
+        if cmd in cmds_1var:
             var1 = tokens[1][1]
             if var1 not in self.variables:
                 raise SemanticError(f"La variable '{var1}' no está definida.")
             return True
 
-        # xp <identificador>
-        if cmd == "xp":
-            var1 = tokens[1][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
-            return True
-
-        # jefe <identificador> <identificador> ...
-        if cmd == "jefe":
+        cmds_multi = ["jefe", "esbirro"]
+        if cmd in cmds_multi:
             for t in tokens[1:]:
                 var = t[1]
                 if var not in self.variables:
                     raise SemanticError(f"La variable '{var}' no está definida.")
-            return True
-
-        # esbirro <identificador> <identificador> ...
-        if cmd == "esbirro":
-            for t in tokens[1:]:
-                var = t[1]
-                if var not in self.variables:
-                    raise SemanticError(f"La variable '{var}' no está definida.")
-            return True
-
-        # decir <identificador>
-        if cmd == "decir":
-            var1 = tokens[1][1]
-            if var1 not in self.variables:
-                raise SemanticError(f"La variable '{var1}' no está definida.")
             return True
 
         raise SemanticError("Instrucción no reconocida o semántica inválida.")
+
 
 # Ejemplo de uso:
 if __name__ == "__main__":
@@ -125,18 +87,18 @@ if __name__ == "__main__":
     lexer = Lexer()
     semantic = SemanticAnalyzer()
     instrucciones = [
-        "crear vida = 100",
-        "crear pocion = 50",
-        "curar vida pocion",
-        "golpear vida pocion",
-        "multiplicar vida pocion",
-        "dividir vida pocion",
-        "poder vida pocion",
-        "revivir vida",
-        "xp vida",
-        "jefe vida pocion",
-        "esbirro vida pocion",
-        "decir vida"
+        'crear vida = 100',
+        'crear nombre = "Juan"',
+        'curar vida nombre',  # ejemplo ficticio
+        'golpear vida nombre',
+        'multiplicar vida nombre',
+        'dividir vida nombre',
+        'poder vida nombre',
+        'revivir vida',
+        'xp vida',
+        'jefe vida nombre',
+        'esbirro vida nombre',
+        'decir vida'
     ]
     for instruccion in instrucciones:
         tokens = lexer.tokenize(instruccion)

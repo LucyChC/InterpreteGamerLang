@@ -20,7 +20,7 @@ def test_eval_instruction_define_float():
 
 def test_eval_instruction_define_str():
     interp = Interpreter()
-    result = interp.eval_instruction("crear nombre = Juan")
+    result = interp.eval_instruction('crear nombre = "Juan"')
     assert result == "Variable 'nombre' definida con valor Juan"
     assert interp.get_variable("nombre") == "Juan"
 

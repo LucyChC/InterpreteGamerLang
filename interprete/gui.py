@@ -8,11 +8,7 @@ from tkinter import scrolledtext, messagebox
 from interprete.interpreter import Interpreter, InterpreterError
 from interprete.lexer import Lexer
 from interprete.parser import Parser, ParserError
-
-KEYWORDS = [
-    "crear", "curar", "golpear", "multiplicar", "dividir", "poder",
-    "revivir", "xp", "jefe", "esbirro", "decir"
-]
+from interprete.keywords import KEYWORDS
 
 EXAMPLE = (
     "crear a = 10\n"

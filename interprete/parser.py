@@ -4,6 +4,7 @@ Valida la estructura de las instrucciones tokenizadas.
 """
 
 from typing import List, Tuple
+from interprete.keywords import KEYWORDS
 
 class ParserError(Exception):
     """Excepción personalizada para errores de sintaxis."""
