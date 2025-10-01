@@ -50,7 +50,25 @@ class Interpreter:
 
         if action == "definir_variable":
             name = tokens[1][1]
-            value = self._parse_value(tokens[3][1])
+            rhs_tipo, rhs_val = tokens[3]
+            # Resolver el valor según el tipo del token RHS.
+            if rhs_tipo == "NUMERO":
+                value = int(rhs_val)
+            elif rhs_tipo == "DECIMAL":
+                value = float(rhs_val)
+            elif rhs_tipo == "CADENA":
+                value = rhs_val
+            elif rhs_tipo == "IDENTIFICADOR":
+                # Si existe la variable referenciada, copiar su valor.
+                if rhs_val in self.variables:
+                    value = self.variables[rhs_val]
+                else:
+                    # Si no existe, lo tomamos como literal string (ej: crear nombre = Juan)
+                    value = rhs_val
+            else:
+                # Caso raro: permitirlo por compatibilidad
+                value = rhs_val
+
             self.variables[name] = value
             return f"Variable '{name}' definida con valor {value}"
 
@@ -109,8 +127,12 @@ class Interpreter:
             return f"Resultado: {min(values)}"
 
         elif action == "imprimir":
-            value = self.variables[tokens[1][1]]
-            return f"{tokens[1][1]} = {value}"
+            varname = tokens[1][1]
+            if varname not in self.variables:
+                raise InterpreterError(f"La variable '{varname}' no está definida.")
+            value = self.variables[varname]
+            return f"{varname} = {value}"
+
 
         else:
             raise InterpreterError("Comando Gamer no reconocido o no implementado.")

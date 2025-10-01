@@ -60,8 +60,9 @@ def test_crear_variable():
 def test_crear_variable_existente():
     interp = Interpreter()
     interp.eval_instruction("crear vida = 100")
-    with pytest.raises(InterpreterError):
-        interp.eval_instruction("crear vida = 200")
+    result2 = interp.eval_instruction("crear vida = 200")
+    assert "Variable 'vida' definida" in result2
+    assert interp.variables["vida"] == 200
 
 def test_curar():
     interp = Interpreter()
@@ -194,4 +195,3 @@ def test_poder_numero_variable():
     interp.eval_instruction("crear b = 3")
     result = interp.eval_instruction("poder 2 b")
     assert result == "Resultado: 8"
-
